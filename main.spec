@@ -9,6 +9,8 @@ hidden_imports = loadtxt("requirements.txt", comments="#", delimiter=",", unpack
 hidden_imports = [x.split("=")[0] for x in hidden_imports] + ["dicom_anonymizer"]
 hidden_imports = [x.lower() for x in hidden_imports]
 
+shutil.copytree("./images/", "./tmp_dependencies/images/")
+
 a = Analysis(['./dicomanonymizer/gui.py'],
              pathex=['.'],
              binaries=[],
@@ -37,11 +39,11 @@ exe = EXE(pyz,
           strip=False,
           upx=True,
           console=True,
-          #icon="./tmp_dependencies/images/raidionics-logo.ico"
+          #icon="./tmp_dependencies/images/dicomanonymizer-logo.ico"
 )
 coll = COLLECT(exe,
                a.binaries,
-               Tree("./"),
+               Tree("./tmp_dependencies/"),
                a.zipfiles,
                a.datas,
                strip=False,
