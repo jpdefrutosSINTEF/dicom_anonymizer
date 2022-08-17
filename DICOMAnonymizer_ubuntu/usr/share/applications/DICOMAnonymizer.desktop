@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=DICOMAnonymizer
+Comment=DICOMAnonymizer
+Exec=/usr/local/bin/DICOMAnonymizer/DICOMAnonymizer
+Terminal=false
+Type=Application
+Icon=
+Categories=public.app-categorical.medical

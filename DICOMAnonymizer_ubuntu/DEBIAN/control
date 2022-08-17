@@ -1,0 +1,6 @@
+Package: DICOMAnonymizer
+Version: 0.1.0
+Architecture: i386
+Maintainer: Javier Pérez de Frutos <javier.perezdefrutos@sintef.no>
+Description: DICOMAnonymizer.
+ Software to anonymize DICOM files.
