@@ -38,7 +38,7 @@ jobs:
 
     - name: Test install and run
       run: |
-        dpkg -i dist/DICOMAnonymizer-0.1.0-ubuntu.deb
+        sudo dpkg -i dist/DICOMAnonymizer-0.1.0-ubuntu.deb
         ./usr/local/bin/DICOMAnonymizer/DICOMAnonymizer
 
     - name: Upload package
