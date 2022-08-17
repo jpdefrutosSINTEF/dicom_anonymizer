@@ -1,7 +1,7 @@
 [Desktop Entry]
 Name=DICOMAnonymizer
 Comment=DICOMAnonymizer
-Exec=/opt/DICOMAnonymizer/DICOMAnonymizer
+Exec=/usr/local/bin/DICOMAnonymizer/DICOMAnonymizer
 Terminal=false
 Type=Application
 Icon=
