@@ -1,3 +1,6 @@
-Data
-env
-__pycache__
+Data/
+env/
+*__pycache__/
+venv/
+.idea/
+vs/
