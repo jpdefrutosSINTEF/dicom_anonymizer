@@ -5,7 +5,7 @@ from numpy import loadtxt
 import shutil
 
 # fix hidden imports
-hidden_imports = loadtxt("requirements.txt", comments="#", delimiter=",", unpack=False, dtype=str)
+hidden_imports = loadtxt("requirements.txt", comments="#", delimiter=",", unpack=False, dtype=str, encoding="utf-8")
 hidden_imports = [x.split("=")[0] for x in hidden_imports] + ["dicom_anonymizer"]
 hidden_imports = [x.lower() for x in hidden_imports]
 
