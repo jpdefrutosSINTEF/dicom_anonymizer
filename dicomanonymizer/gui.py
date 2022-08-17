@@ -1,12 +1,12 @@
-from PySide2.QtWidgets import QApplication, QLabel, QWidget, QCheckBox, QLineEdit, QFileSystemModel, QPushButton, QTreeView, QGroupBox, QFileDialog, QFormLayout, QListView, QMessageBox, QProgressDialog
-from PySide2.QtWidgets import QGridLayout, QVBoxLayout, QHBoxLayout, QToolButton
-from PySide2.QtCore import Qt, QDir, QSize, QTimer
+from PySide2.QtWidgets import QApplication, QLabel, QWidget, QCheckBox, QLineEdit, QFileSystemModel, QPushButton, QListView
+from PySide2.QtWidgets import QGridLayout, QVBoxLayout, QHBoxLayout, QToolButton, QGroupBox, QFileDialog, QProgressDialog
+from PySide2.QtCore import Qt, QSize
 from PySide2.QtGui import QIcon, QPixmap
 
 import os, sys
 import ast
 
-from dicomanonymizer.anonymizer import anonymize, generate_actions, anonymize_dicom_file
+from dicomanonymizer.anonymizer import generate_actions, anonymize_dicom_file
 import json
 
 
