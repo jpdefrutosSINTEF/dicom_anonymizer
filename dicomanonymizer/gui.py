@@ -1,12 +1,12 @@
-from PySide2.QtWidgets import QApplication, QLabel, QWidget, QCheckBox, QLineEdit, QFileSystemModel, QPushButton, QTreeView, QGroupBox, QFileDialog, QFormLayout, QListView
+from PySide2.QtWidgets import QApplication, QLabel, QWidget, QCheckBox, QLineEdit, QFileSystemModel, QPushButton, QTreeView, QGroupBox, QFileDialog, QFormLayout, QListView, QMessageBox, QProgressDialog
 from PySide2.QtWidgets import QGridLayout, QVBoxLayout, QHBoxLayout, QToolButton
-from PySide2.QtCore import Qt, QDir, QSize
+from PySide2.QtCore import Qt, QDir, QSize, QTimer
 from PySide2.QtGui import QIcon, QPixmap
 
 import os, sys
 import ast
 
-from dicomanonymizer.anonymizer import anonymize, generate_actions
+from dicomanonymizer.anonymizer import anonymize, generate_actions, anonymize_dicom_file
 import json
 
 
@@ -25,28 +25,57 @@ class UserParameters:
         self.keep_private_tags = keep_private_tags
 
 
-def build_options_widget():
-    # Options
-    cb_keep_private_tags = QCheckBox("Keep Private Tags")
-    label_tag_actions = QLabel('Tag actions')
-    line_tag_actions = QLineEdit()
-    dict_file_widget = FileSelector(label='Dictionary', button_label='...', selection_filter='JSON (*.json)')
+class OptionsWidget:
+    def __init__(self):
+        # Options
+        self.cb_keep_private_tags = QCheckBox("Keep Private Tags")
+        self.cb_rename_files = QCheckBox("Rename files")
+        self.label_tag_actions = QLabel('Tag actions (comma separated)')
+        self.line_tag_actions = QLineEdit()
+        self.dict_file_widget = FileSelector(label='Dictionary', button_label='...', selection_filter='JSON (*.json)')
 
-    # Options layouts
-    layout_tag_actions = QHBoxLayout()
-    layout_tag_actions.addWidget(label_tag_actions)
-    layout_tag_actions.addWidget(line_tag_actions)
+        self._layout_tag_actions = QHBoxLayout()
+        self._layout_options = QVBoxLayout()
+        self.container_layout = QGroupBox()
 
-    layout_options = QVBoxLayout()
-    layout_options.alignment()
-    layout_options.addWidget(cb_keep_private_tags)
-    layout_options.addLayout(layout_tag_actions)
-    layout_options.addWidget(dict_file_widget)
-    layout_options.setAlignment(Qt.AlignTop)
-    groupbox_options = QGroupBox()
-    groupbox_options.setLayout(layout_options)
-    return groupbox_options
+        self.build_layouts()
 
+    def build_layouts(self):
+        # Options layouts
+        self._layout_tag_actions.addWidget(self.label_tag_actions)
+        self._layout_tag_actions.addWidget(self.line_tag_actions)
+
+        self._layout_options.alignment()
+        self._layout_options.addWidget(self.cb_keep_private_tags)
+        self._layout_options.addLayout(self._layout_tag_actions)
+        self._layout_options.addWidget(self.dict_file_widget)
+        self._layout_options.setAlignment(Qt.AlignTop)
+        self._layout_options.addWidget(self.cb_rename_files)
+        self.container_layout.setLayout(self._layout_options)
+
+
+# def build_options_widget():
+#     # Options
+#     cb_keep_private_tags = QCheckBox("Keep Private Tags")
+#     label_tag_actions = QLabel('Tag actions (comma separated)')
+#     line_tag_actions = QLineEdit()
+#     dict_file_widget = FileSelector(label='Dictionary', button_label='...', selection_filter='JSON (*.json)')
+#
+#     # Options layouts
+#     layout_tag_actions = QHBoxLayout()
+#     layout_tag_actions.addWidget(label_tag_actions)
+#     layout_tag_actions.addWidget(line_tag_actions)
+#
+#     layout_options = QVBoxLayout()
+#     layout_options.alignment()
+#     layout_options.addWidget(cb_keep_private_tags)
+#     layout_options.addLayout(layout_tag_actions)
+#     layout_options.addWidget(dict_file_widget)
+#     layout_options.setAlignment(Qt.AlignTop)
+#     groupbox_options = QGroupBox()
+#     groupbox_options.setLayout(layout_options)
+#     return groupbox_options
+#
 
 class FileSelector(QWidget):
     def __init__(self,
@@ -113,9 +142,18 @@ class FileSelector(QWidget):
         if not self.__manual_selection:
             self.text_box.setText(new_text)
 
+    def setDisabled(self, arg__1:bool) -> None:
+        self.text_box.setDisabled(arg__1)
+        self.button.setDisabled(arg__1)
 
-class FileExplorer:
-    def __init__(self, output_suffix: str = '__Anonymized'):
+    def setEnabled(self, arg__1:bool) -> None:
+        self.text_box.setEnabled(arg__1)
+        self.button.setEnabled(arg__1)
+
+
+class SelectorWidget:
+    def __init__(self, output_suffix: str = '__Anonymized', options_widget: QWidget = None):
+        self.__options_widget_ref = options_widget
         self.file_system_model = QFileSystemModel()
         # self.file_system_model.setRootPath(QDir.rootPath())
 
@@ -134,6 +172,9 @@ class FileExplorer:
         self.button_up.setIconSize(QSize(30, 30))
         self.button_up.setIcon(button_up_icon)
         self.button_up.clicked.connect(self.__one_level_up)
+
+        self.select_current_folder_button = QPushButton('Select current folder')
+        self.select_current_folder_button.clicked.connect(self.__select_current_folder)
 
         self.run_button = QPushButton('Run')
 
@@ -167,7 +208,9 @@ class FileExplorer:
 
         self.__nav_layout = QVBoxLayout()
         self.__nav_layout.addWidget(self.button_up)
+        self.__nav_layout.addWidget(self.select_current_folder_button)
         self.__nav_layout.setAlignment(Qt.AlignTop)
+        self.__nav_layout.setAlignment(Qt.AlignHCenter)
         self.__file_layout.addLayout(self.__nav_layout, 1, 1)
 
     @property
@@ -188,17 +231,23 @@ class FileExplorer:
         location = self.find_directory.text_box.text()
         self.file_list_view.setRootIndex(self.file_system_model.setRootPath(location))
 
+    def __select_current_folder(self):
+        location = self.find_directory.text_box.text()
+        idx = self.file_system_model.index(location)
+        self.file_list_view.setCurrentIndex(idx)
+        self.update_selection()
+
     def update_selection(self):
         idx = self.file_list_view.currentIndex()
         self.selection.setText(self.file_system_model.filePath(idx))
 
         if not self.user_defined_output:
-            folder_name = '_Anonymyzed'
+            folder_name = '_Anonymous'
             dir_path, old_name = os.path.split(self.selection.text())
             if os.path.isdir(self.selection.text()):
                 folder_name = old_name + folder_name
             else:
-                folder_name = old_name.split('.')[0] + folder_name
+                folder_name = old_name.split('.')[0] + folder_name  # + '.' + old_name.split('.')[-1]
             self.output_path._set_text_box(os.path.join(dir_path, folder_name))
 
     def go_in_directory(self, dir_path: str = None):
@@ -218,91 +267,170 @@ class FileExplorer:
             self.go_in_directory(os.path.dirname(current_dir))
 
 
-def run_anonymizer(user_parameters: UserParameters):
-    # Create a new actions' dictionary from parameters in the GUI
-    new_anonymization_actions = {}
-    cpt = 0
-    if user_parameters.tag:
-        number_of_new_tags_actions = len(user_parameters.tag)
-        if number_of_new_tags_actions > 0:
-            for i in range(number_of_new_tags_actions):
-                current_tag_parameters = user_parameters.tag[i]
+class AnonymizerGUI:
+    def __init__(self, parent=None):
+        self.__file_selector_widget = SelectorWidget()
+        self.__options_widget = OptionsWidget()
 
-                nb_parameters = len(current_tag_parameters)
-                if nb_parameters == 0:
-                    continue
+        self.layout = QGridLayout()
 
-                options = None
-                action_name = current_tag_parameters[1]
+        self.build_connections()
+        self.build_gui()
 
-                # Means that we are in regexp mode
-                if nb_parameters == 4:
-                    options = {
-                        "find": current_tag_parameters[2],
-                        "replace": current_tag_parameters[3]
-                    }
+    def build_connections(self):
+        self.__file_selector_widget.run_button.clicked.connect(self.__slot_run_button)
 
-                tags_list = [ast.literal_eval(current_tag_parameters[0])]
+    def build_gui(self):
+        label_options = QLabel('Options')
+        label_file_explorer = QLabel('Select a DICOM file or folder with DICOM files:')
+        self.layout.addWidget(label_file_explorer, 0, 0)
+        self.layout.addLayout(self.__file_selector_widget.file_explorer_layout, 1, 0)
+        self.layout.addLayout(self.__file_selector_widget.information_layout, 2, 0, 1, 2)
+        self.layout.addWidget(label_options, 0, 1)
+        self.layout.addWidget(self.__options_widget.container_layout, 1, 1)
 
-                action = eval(action_name)
-                # When generate_actions is called and we have options, we don't want use regexp
-                # as an action but we want to call it to generate a new method
-                if options is not None:
-                    action = action_name
+    def __slot_run_button(self):
+        if not os.path.exists(self.__file_selector_widget.output_path.text_box.text()):
+            if not os.path.split(self.__file_selector_widget.output_path.text_box.text())[-1].endswith('.dcm'):
+                os.makedirs(self.__file_selector_widget.output_path.text_box.text())
 
-                if cpt == 0:
-                    new_anonymization_actions = generate_actions(tags_list, action, options)
-                else:
-                    new_anonymization_actions.update(generate_actions(tags_list, action, options))
-                cpt += 1
+        user_parameters = UserParameters(input_path=self.__file_selector_widget.selection.text(),
+                                         output_path=os.path.join(self.__file_selector_widget.output_path.text_box.text()))
 
-    # Read an existing dictionary
-    if user_parameters.dictionary_file:
-        with open(user_parameters.dictionary_file) as json_file:
-            data = json.load(json_file)
-            for key, value in data.items():
-                action_name = value
-                options = None
-                if type(value) is dict:
-                    action_name = value['action']
-                    options = {
-                        "find": value['find'],
-                        "replace": value['replace']
-                    }
+        user_parameters.keep_private_tags = self.__options_widget.cb_keep_private_tags.isChecked()
+        tags = self.__options_widget.line_tag_actions.text()
+        user_parameters.tag = tags.split(',') if tags != '' else list()     # Empty list
+        user_parameters.dictionary_file = self.__options_widget.dict_file_widget.text_box.text()
 
-                l = [ast.literal_eval(key)]
-                action = defined_action_map[action_name] if action_name in defined_action_map else eval(action_name)
-                if cpt == 0:
-                    new_anonymization_actions = generate_actions(l, action, options)
-                else:
-                    new_anonymization_actions.update(generate_actions(l, action, options))
-                cpt += 1
+        anonymization_rules = self.__get_anonymization_rules(user_parameters)
 
-    # Launch the anonymization
-    anonymize(user_parameters.input_path, user_parameters.output_path, new_anonymization_actions, not user_parameters.keep_private_tags)
+        self.setDisabled(True)
+
+        input_files, output_files, progress_increment = self.__prepare_files_and_progress_bar()
+
+        dialog_progress = QProgressDialog('Processing files', 'Cancel', 0, 100)
+        dialog_progress.setWindowModality(Qt.WindowModal)
+
+        for i, (in_file, out_file) in enumerate(zip(input_files, output_files)):
+            self.run_anonymization(in_file, out_file, not user_parameters.keep_private_tags, anonymization_rules)
+            dialog_progress.setValue(progress_increment * i)
+            if dialog_progress.wasCanceled():
+                break
+        dialog_progress.setValue(100)
+        dialog_progress.close()
+
+        self.setEnabled(True)
+
+    @staticmethod
+    def __get_anonymization_rules(user_parameters: UserParameters):
+        # Create a new actions' dictionary from parameters in the GUI
+        new_anonymization_rules = {}
+        cpt = 0
+        if user_parameters.tag:
+            number_of_new_tags_actions = len(user_parameters.tag)
+            if number_of_new_tags_actions > 0:
+                for i in range(number_of_new_tags_actions):
+                    current_tag_parameters = user_parameters.tag[i]
+
+                    nb_parameters = len(current_tag_parameters)
+                    if nb_parameters == 0:
+                        continue
+
+                    options = None
+                    action_name = current_tag_parameters[1]
+
+                    # Means that we are in regexp mode
+                    if nb_parameters == 4:
+                        options = {
+                            "find": current_tag_parameters[2],
+                            "replace": current_tag_parameters[3]
+                        }
+
+                    tags_list = [ast.literal_eval(current_tag_parameters[0])]
+
+                    action = eval(action_name)
+                    # When generate_actions is called and we have options, we don't want use regexp
+                    # as an action but we want to call it to generate a new method
+                    if options is not None:
+                        action = action_name
+
+                    if cpt == 0:
+                        new_anonymization_rules = generate_actions(tags_list, action, options)
+                    else:
+                        new_anonymization_rules.update(generate_actions(tags_list, action, options))
+                    cpt += 1
+
+        # Read an existing dictionary
+        if user_parameters.dictionary_file:
+            with open(user_parameters.dictionary_file) as json_file:
+                data = json.load(json_file)
+                for key, value in data.items():
+                    action_name = value
+                    options = None
+                    if type(value) is dict:
+                        action_name = value['action']
+                        options = {
+                            "find": value['find'],
+                            "replace": value['replace']
+                        }
+
+                    l = [ast.literal_eval(key)]
+                    action = eval(action_name)
+                    if cpt == 0:
+                        new_anonymization_rules = generate_actions(l, action, options)
+                    else:
+                        new_anonymization_rules.update(generate_actions(l, action, options))
+                    cpt += 1
+
+        return new_anonymization_rules
+
+    def __prepare_files_and_progress_bar(self):
+        input_files = [self.__file_selector_widget.selection.text()]
+        output_dir = self.__file_selector_widget.output_path.text_box.text()
+        rename_files = self.__options_widget.cb_rename_files.isChecked()
+        if os.path.isdir(input_files[0]):
+            input_dir = input_files[0]
+            input_files = [os.path.join(input_dir, f) for f in os.listdir(input_dir) if f.endswith('.dcm')]
+            input_files.sort()
+            if rename_files:
+                output_files = [os.path.join(output_dir, 'anonymized_{:04}.dcm'.format(i)) for i in range(len(input_files))]
+            else:
+                output_files = [os.path.join(output_dir, os.path.split(f)[-1]) for f in input_files]
+            progress_increment = 100 / len(input_files)
+        else:
+            if rename_files:
+                output_files = [os.path.join(output_dir, 'anonymized_{:04}.dcm'.format(1))]
+            else:
+                output_files = [os.path.join(output_dir, os.path.split(input_files[0])[-1])]
+            progress_increment = 100
+        return input_files, output_files, progress_increment
+
+    @staticmethod
+    def run_anonymization(input_file, output_file, delete_private_tags, anonymization_rules):
+        # Launch the anonymization
+        anonymize_dicom_file(input_file, output_file, anonymization_rules, delete_private_tags)
+
+    def setDisabled(self, arg__1):
+        self.__file_selector_widget.run_button.setDisabled(arg__1)
+        self.__file_selector_widget.find_directory.setDisabled(arg__1)
+        self.__file_selector_widget.output_path.setDisabled(arg__1)
+
+    def setEnabled(self, args__1):
+        self.__file_selector_widget.run_button.setEnabled(args__1)
+        self.__file_selector_widget.find_directory.setEnabled(args__1)
+        self.__file_selector_widget.output_path.setEnabled(args__1)
 
 
 if __name__ == "__main__":
     app = QApplication([])      # THIS MUST BE THE FIRST INSTRUCTION!!!!
     window = QWidget()
 
-    options_widget = build_options_widget()
-
-    file_explorer = FileExplorer()
-
-    # App layout
-    app_layout = QGridLayout()
-    label_options = QLabel('Options')
-    label_file_explorer = QLabel('Select a DICOM file or folder with DICOM files:')
-    app_layout.addWidget(label_file_explorer, 0, 0)
-    app_layout.addLayout(file_explorer.file_explorer_layout, 1, 0)
-    app_layout.addLayout(file_explorer.information_layout, 2, 0, 1, 2)
-    app_layout.addWidget(label_options, 0, 1)
-    app_layout.addWidget(options_widget, 1, 1)
+    gui = AnonymizerGUI()
 
     # Applicaton setup
     window.setWindowTitle('DICOM Anonymizer')
     window.setGeometry(300, 300, 800, 400)
-    window.setLayout(app_layout)
+    window.setLayout(gui.layout)
     window.show()
     sys.exit(app.exec_())
+
