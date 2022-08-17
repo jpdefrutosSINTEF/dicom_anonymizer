@@ -26,6 +26,7 @@ jobs:
 
     - name: Build software
       run: |
+        mkdir tmp_dependencies
         pyinstaller --noconfirm --clean main.spec
 
     - name: Make installer

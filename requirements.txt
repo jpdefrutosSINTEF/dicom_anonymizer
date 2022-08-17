@@ -4,8 +4,8 @@ future==0.18.2
 numpy
 pefile==2022.5.30
 pydicom==2.3.0
-pyinstaller==5.3
-pyinstaller-hooks-contrib==2022.8
-PySide2==5.15.2.1
-shiboken2==5.15.2.1
+pyinstaller==5.0
+pyinstaller-hooks-contrib==2021.1
+PySide2==5.15.2
+shiboken2==5.15.2
 tqdm==4.64.0
