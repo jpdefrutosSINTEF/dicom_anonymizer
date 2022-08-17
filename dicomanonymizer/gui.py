@@ -54,29 +54,6 @@ class OptionsWidget:
         self.container_layout.setLayout(self._layout_options)
 
 
-# def build_options_widget():
-#     # Options
-#     cb_keep_private_tags = QCheckBox("Keep Private Tags")
-#     label_tag_actions = QLabel('Tag actions (comma separated)')
-#     line_tag_actions = QLineEdit()
-#     dict_file_widget = FileSelector(label='Dictionary', button_label='...', selection_filter='JSON (*.json)')
-#
-#     # Options layouts
-#     layout_tag_actions = QHBoxLayout()
-#     layout_tag_actions.addWidget(label_tag_actions)
-#     layout_tag_actions.addWidget(line_tag_actions)
-#
-#     layout_options = QVBoxLayout()
-#     layout_options.alignment()
-#     layout_options.addWidget(cb_keep_private_tags)
-#     layout_options.addLayout(layout_tag_actions)
-#     layout_options.addWidget(dict_file_widget)
-#     layout_options.setAlignment(Qt.AlignTop)
-#     groupbox_options = QGroupBox()
-#     groupbox_options.setLayout(layout_options)
-#     return groupbox_options
-#
-
 class FileSelector(QWidget):
     def __init__(self,
                  parent=None,
@@ -168,7 +145,7 @@ class SelectorWidget:
 
         self.button_up = QToolButton()
         button_up_icon = QIcon()
-        button_up_icon.addPixmap(QPixmap('./images/up.png'), QIcon.Normal, QIcon.On)
+        button_up_icon.addPixmap(QPixmap(os.path.join(os.path.dirname(os.path.realpath(__file__)), '../images/up.png')), QIcon.Normal, QIcon.On)
         self.button_up.setIconSize(QSize(30, 30))
         self.button_up.setIcon(button_up_icon)
         self.button_up.clicked.connect(self.__one_level_up)
@@ -207,10 +184,19 @@ class SelectorWidget:
         self.__file_layout.addWidget(self.file_list_view, 1, 0)
 
         self.__nav_layout = QVBoxLayout()
-        self.__nav_layout.addWidget(self.button_up)
-        self.__nav_layout.addWidget(self.select_current_folder_button)
-        self.__nav_layout.setAlignment(Qt.AlignTop)
-        self.__nav_layout.setAlignment(Qt.AlignHCenter)
+
+        h_layout_1 = QHBoxLayout()
+        h_layout_1.addStretch()
+        h_layout_1.addWidget(self.button_up)
+        h_layout_1.addStretch()
+
+        h_layout_2 = QHBoxLayout()
+        h_layout_2.addStretch()
+        h_layout_2.addWidget(self.select_current_folder_button)
+        h_layout_2.addStretch()
+
+        self.__nav_layout.addLayout(h_layout_1)
+        self.__nav_layout.addLayout(h_layout_2)
         self.__file_layout.addLayout(self.__nav_layout, 1, 1)
 
     @property
