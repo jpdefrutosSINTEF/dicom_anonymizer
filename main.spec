@@ -11,7 +11,7 @@ hidden_imports = [x.lower() for x in hidden_imports]
 
 shutil.copytree("./images/", "./tmp_dependencies/images/")
 
-a = Analysis(['./dicomanonymizer/gui.py'],
+a = Analysis(['./main.py'],
              pathex=['.'],
              binaries=[],
              datas=[],

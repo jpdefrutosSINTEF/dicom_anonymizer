@@ -407,7 +407,7 @@ class AnonymizerGUI:
         self.__file_selector_widget.output_path.setEnabled(args__1)
 
 
-if __name__ == "__main__":
+def main():
     app = QApplication([])      # THIS MUST BE THE FIRST INSTRUCTION!!!!
     window = QWidget()
 
@@ -420,3 +420,6 @@ if __name__ == "__main__":
     window.show()
     sys.exit(app.exec_())
 
+
+if __name__ == "__main__":
+    main()
