@@ -36,11 +36,6 @@ jobs:
         dpkg-deb --build --root-owner-group DICOMAnonymizer_ubuntu
         cp -r DICOMAnonymizer_ubuntu.deb dist/DICOMAnonymizer-0.1.0-ubuntu.deb
 
-    - name: Test install and run
-      run: |
-        sudo dpkg -i dist/DICOMAnonymizer-0.1.0-ubuntu.deb
-        ./usr/local/bin/DICOMAnonymizer/DICOMAnonymizer
-
     - name: Upload package
       uses: actions/upload-artifact@v2
       with:
