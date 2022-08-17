@@ -145,6 +145,7 @@ class SelectorWidget:
 
         self.button_up = QToolButton()
         button_up_icon = QIcon()
+        print("\n---QIcon path:", os.path.join(os.path.dirname(os.path.realpath(__file__)), '../images/up.png'))
         button_up_icon.addPixmap(QPixmap(os.path.join(os.path.dirname(os.path.realpath(__file__)), '../images/up.png')), QIcon.Normal, QIcon.On)
         self.button_up.setIconSize(QSize(30, 30))
         self.button_up.setIcon(button_up_icon)
