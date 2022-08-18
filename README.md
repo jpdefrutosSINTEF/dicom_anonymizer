@@ -1,15 +1,15 @@
-<dic align="center">
+<div align="center">
     <img src="images/app_icon_128.png" width="128">
-</dic>
+</div>
 # DicomAnonymizer: GUI interface
 
 Graphical User Interface built over KitwareMedical's DICOM Anonymization tool: https://github.com/KitwareMedical/dicom-anonymizer
 
 ### DISCLAIMER: Work in progress. Use under your own responsability.
 
-<dic align="center">
+<div align="center">
     <img src="images/demo.png" width="128">
-</dic>
+</div>
 
 <ol>
     <li>Select folder: select the folder where the DICOM image(s) is located.</li>
