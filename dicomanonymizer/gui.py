@@ -9,6 +9,7 @@ import ast
 from dicomanonymizer.anonymizer import generate_actions, anonymize_dicom_file
 import json
 
+ROOT_PATH = os.path.split(os.path.dirname(os.path.realpath(__file__)))[0]
 
 class UserParameters:
     def __init__(self,
@@ -144,8 +145,9 @@ class SelectorWidget:
         self.find_directory.text_box.textChanged.connect(self.__update_list_view)
 
         self.button_up = QToolButton()
+        print('--QIcon path: ' + os.path.join(ROOT_PATH, 'images/up.png'))
         button_up_icon = QIcon()
-        button_up_icon.addPixmap(QPixmap(os.path.join(os.path.dirname(os.path.realpath(__file__)), '../images/up.png')), QIcon.Normal, QIcon.On)
+        button_up_icon.addPixmap(QPixmap(os.path.join(ROOT_PATH, 'images/up.png')), QIcon.Normal, QIcon.On)
         self.button_up.setIconSize(QSize(30, 30))
         self.button_up.setIcon(button_up_icon)
         self.button_up.clicked.connect(self.__one_level_up)

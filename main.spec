@@ -9,6 +9,9 @@ hidden_imports = loadtxt("requirements.txt", comments="#", delimiter=",", unpack
 hidden_imports = [x.split("=")[0] for x in hidden_imports] + ["dicom_anonymizer"]
 hidden_imports = [x.lower() for x in hidden_imports]
 
+# copy dependencies and overwrite if already exists (as well as images)
+if os.path.exists("./tmp_dependencies/"):
+    shutil.rmtree("./tmp_dependencies/")
 shutil.copytree("./images/", "./tmp_dependencies/images/")
 
 a = Analysis(['./main.py'],
@@ -39,7 +42,7 @@ exe = EXE(pyz,
           strip=False,
           upx=True,
           console=True,
-          #icon="./tmp_dependencies/images/dicomanonymizer-logo.ico"
+          icon="./tmp_dependencies/images/app_icon_128.ico"
 )
 coll = COLLECT(exe,
                a.binaries,

@@ -4,5 +4,5 @@ Comment=DICOMAnonymizer
 Exec=/usr/local/bin/DICOMAnonymizer/DICOMAnonymizer
 Terminal=false
 Type=Application
-Icon=
+Icon=/usr/local/bin/DICOMANonymizer/images/app_icon_128.ico
 Categories=public.app-categorical.medical
