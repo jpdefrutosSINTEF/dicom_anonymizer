@@ -4,7 +4,7 @@
 
 # DICOMAnonymizer: GUI interface
 
-Graphical User Interface built over KitwareMedical's DICOM Anonymization tool: https://github.com/KitwareMedical/dicom-anonymizer
+Graphical user interface built on top of Kitware Medical's DICOM Anonymization tool: https://github.com/KitwareMedical/dicom-anonymizer
 
 ### DISCLAIMER: Work in progress. Use under your own responsability.
 
@@ -26,3 +26,4 @@ Graphical User Interface built over KitwareMedical's DICOM Anonymization tool: h
 
 # 🏆 Acknowledgements
 Work originally done by Edern Haumont
+Kitware Medical: https://github.com/KitwareMedical/dicom-anonymizer
