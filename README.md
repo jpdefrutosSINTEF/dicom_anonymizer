@@ -6,7 +6,7 @@
 
 Graphical user interface built on top of Kitware Medical's DICOM Anonymization tool: https://github.com/KitwareMedical/dicom-anonymizer
 
-### DISCLAIMER: Work in progress. Use under your own responsability.
+### DISCLAIMER: Work in progress. Use at your own risk.
 
 # 🧾 Instructions
 
