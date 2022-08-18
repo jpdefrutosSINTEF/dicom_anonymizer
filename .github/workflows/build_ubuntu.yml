@@ -9,7 +9,11 @@ on:
 jobs:
   build:
     name: Build packages
-    runs-on: ubuntu-18.04
+    runs-on: ${{ matrix.os}}
+    strategy:
+      matrix:
+        include:
+          - os: [ubuntu-18.04, ubuntu-20.04]
 
     steps:
     - uses: actions/checkout@v1
@@ -34,7 +38,7 @@ jobs:
         mkdir -p DICOMAnonymizer_ubuntu/usr/local/bin
         cp -r dist/DICOMAnonymizer DICOMAnonymizer_ubuntu/usr/local/bin
         dpkg-deb --build --root-owner-group DICOMAnonymizer_ubuntu
-        cp -r DICOMAnonymizer_ubuntu.deb dist/DICOMAnonymizer-0.1.0-ubuntu.deb
+        cp -r DICOMAnonymizer_ubuntu.deb dist/DICOMAnonymizer-0.1.0-${{ matrix.os}}.deb
 
     - name: Upload package
       uses: actions/upload-artifact@v2
