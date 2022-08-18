@@ -411,6 +411,7 @@ class AnonymizerGUI:
 
 def main():
     app = QApplication([])      # THIS MUST BE THE FIRST INSTRUCTION!!!!
+    app.setWindowIcon(QIcon(os.path.join(ROOT_PATH, 'images', 'app_icon_16.png')))
     window = QWidget()
 
     gui = AnonymizerGUI()

@@ -42,7 +42,7 @@ exe = EXE(pyz,
           strip=False,
           upx=True,
           console=True,
-          icon="./tmp_dependencies/images/app_icon_32.ico"
+          icon="./tmp_dependencies/images/app_icon_128.ico"
 )
 coll = COLLECT(exe,
                a.binaries,
