@@ -1,14 +1,17 @@
 <div align="center">
     <img src="images/app_icon_128.png" width="128">
 </div>
-# DicomAnonymizer: GUI interface
+
+# DICOMAnonymizer: GUI interface
 
 Graphical User Interface built over KitwareMedical's DICOM Anonymization tool: https://github.com/KitwareMedical/dicom-anonymizer
 
 ### DISCLAIMER: Work in progress. Use under your own responsability.
 
+# 🧾 Instructions
+
 <div align="center">
-    <img src="images/demo.png" width="128">
+    <img src="images/demo.png" width="800">
 </div>
 
 <ol>
@@ -21,5 +24,5 @@ Graphical User Interface built over KitwareMedical's DICOM Anonymization tool: h
     <li>Run: anonymize the selected file or directory</li>
 </ol>
 
-# Acknowledgements
+# 🏆 Acknowledgements
 Work originally done by Edern Haumont
