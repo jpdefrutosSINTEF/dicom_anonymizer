@@ -53,6 +53,7 @@ class OptionsWidget:
         self._layout_options.setAlignment(Qt.AlignTop)
         self._layout_options.addWidget(self.cb_rename_files)
         self.container_layout.setLayout(self._layout_options)
+        self.container_layout.setFixedWidth(400)
 
 
 class FileSelector(QWidget):
@@ -186,7 +187,7 @@ class SelectorWidget:
         self.__file_layout.addWidget(self.file_list_view, 1, 0)
 
         self.__nav_layout = QVBoxLayout()
-
+        self.__nav_widget = QWidget()
         h_layout_1 = QHBoxLayout()
         h_layout_1.addStretch()
         h_layout_1.addWidget(self.button_up)
@@ -199,7 +200,9 @@ class SelectorWidget:
 
         self.__nav_layout.addLayout(h_layout_1)
         self.__nav_layout.addLayout(h_layout_2)
-        self.__file_layout.addLayout(self.__nav_layout, 1, 1)
+        self.__nav_widget.setLayout(self.__nav_layout)
+        self.__nav_widget.setFixedWidth(150)
+        self.__file_layout.addWidget(self.__nav_widget, 1, 1)
 
     @property
     def file_explorer_layout(self):
