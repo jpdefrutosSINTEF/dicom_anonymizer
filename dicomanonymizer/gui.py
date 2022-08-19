@@ -25,9 +25,10 @@ class OptionsWidget:
         self.output_folder = FileSelector(button_label='Select directory', directory=True)
         self.output_folder.setHidden(True)
         self.button_fix_output_dir.clicked.connect(lambda: self.output_folder.setHidden(not self.button_fix_output_dir.isChecked()))
-        self.label_tag_actions = QLabel('Tag actions (comma separated)')
+        self.label_tag_actions = QLabel('Tag actions')
         self.line_tag_actions = QLineEdit()
-        self.line_tag_actions.setText("(0x0010,0x0020);replace_UID")
+        self.line_tag_actions.setText("(0x0010,0x0020);replace_UID;")
+        self.line_tag_actions.setToolTip("Separate the items with semicolon (;). E.g., (0x0010,0x0020);replace_UID;(0x001,0x001);keep;")
         self.dict_file_widget = FileSelector(label='Dictionary', button_label='...', selection_filter='JSON (*.json)')
 
         self._layout_tag_actions = QHBoxLayout()
@@ -421,6 +422,7 @@ class AnonymizerGUI:
 
         tags = self.__options_widget.line_tag_actions.text()
         tags = tags.split(';') if tags != '' else list()     # Empty list
+        tags.remove('')
         tags = list(zip(*(iter(tags),) * 2))  # TODO: improve tag actions GUI [["tags", action], ["tags", action], ...]
         anonymization_rules = self.__get_anonymization_rules(tags, self.__options_widget.dict_file_widget.text_box.text())
 
