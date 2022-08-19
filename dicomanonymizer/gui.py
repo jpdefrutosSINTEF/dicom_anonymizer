@@ -31,6 +31,7 @@ class OptionsWidget:
         # Options
         self.cb_keep_private_tags = QCheckBox("Keep Private Tags")
         self.cb_rename_files = QCheckBox("Rename files")
+        self.cb_rename_files.setChecked(True)
         self.label_tag_actions = QLabel('Tag actions (comma separated)')
         self.line_tag_actions = QLineEdit()
         self.dict_file_widget = FileSelector(label='Dictionary', button_label='...', selection_filter='JSON (*.json)')
