@@ -31,7 +31,21 @@ Graphical user interface built on top of Kitware Medical's DICOM Anonymization t
     <li><b>Run</b>: processed the valid files/directories in the selection list. A progress bar will show up, and when done you will be given the option to open the output folder.</li>
 </ol>
 
-By default, the output folder will be in the installation directory.
+Notice that:
+<ul>
+    <li>By default, the output folder will be in the installation directory.</li>
+    <li>When adding a folder, the application expects to find DICOM images within it. It will <b>not check subfolers</b> within the first one.</li>
+</ul>
+
+## ⚙ How to use it
+
+<ol>
+<li>Select the directory where the images are contained using (1).</li>
+<li>Select the file(s)/folder(s) in (2) and press <i>Add selection >></i> (5) to add these to the <i>Selection list</i> (6).</li>
+<li>Edit the <i>Selection list</i> (6) using the buttons above it.</li>
+<li>Edit the options (7) if needed.</li>
+<li>Press <i>Run</i> (9) when ready!</li>
+</ol>
 
 # 🏆 Acknowledgements
 <ul>
