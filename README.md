@@ -18,11 +18,20 @@ Graphical user interface built on top of Kitware Medical's DICOM Anonymization t
     <li><b>Select folder</b>: select the folder where the DICOM image(s) is located.</li>
     <li><b>File list</b>: click on the single DICOM file to anonymize.</li>
     <li><b>⬆</b>: travel one level up in the file system.</li>
-    <li><b>Select current folder</b>: if current directory contains the DICOM files, use this button to select the whole directory.</li>
-    <li><b>Change output folder</b>: change the default directory where the anonymized images will be stored.</li>
+    <li><b>Hold selection</b>: keep the selected object highlighted without pressing CTRL or SHIFT.</li>
+    <li><b>Add selection >></b>: Add the selected objects to the list (6).</li>
+    <li><b>List of selected objects</b>: invalid items will be shown in red. Use the buttons above to edit the list:</li>
+        <ul>
+            <li>Clear selection: remove the selected objects.</li>
+            <li>Clear list: remove all the items in the list.</li>
+            <li>Clear invalid: remove only the invalid items (red).</li>
+        </ul>
     <li><b>Options</b>: see https://github.com/KitwareMedical/dicom-anonymizer for more information on the options.</li>
-    <li><b>Run</b>: anonymize the selected file or directory.</li>
+    <li><b>Select output folder</b>: allows the user to define the output folder. Here a new folder named <i>Anonymized_DATE_TIME</i> will be created.</li>
+    <li><b>Run</b>: processed the valid files/directories in the selection list. A progress bar will show up, and when done you will be given the option to open the output folder.</li>
 </ol>
+
+By default, the output folder will be in the installation directory.
 
 # 🏆 Acknowledgements
 <ul>
