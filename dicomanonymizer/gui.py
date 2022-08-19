@@ -10,7 +10,7 @@ from datetime import datetime
 import os, sys
 import ast
 
-from dicomanonymizer.anonymizer import generate_actions, anonymize_dicom_file
+from dicomanonymizer.anonymizer import generate_actions, anonymize_dicom_file, actions_map_name_functions
 import json
 
 ROOT_PATH = os.path.split(os.path.dirname(os.path.realpath(__file__)))[0]
@@ -27,6 +27,7 @@ class OptionsWidget:
         self.button_fix_output_dir.clicked.connect(lambda: self.output_folder.setHidden(not self.button_fix_output_dir.isChecked()))
         self.label_tag_actions = QLabel('Tag actions (comma separated)')
         self.line_tag_actions = QLineEdit()
+        self.line_tag_actions.setText("(0x0010,0x0020);replace_UID")
         self.dict_file_widget = FileSelector(label='Dictionary', button_label='...', selection_filter='JSON (*.json)')
 
         self._layout_tag_actions = QHBoxLayout()
@@ -419,8 +420,8 @@ class AnonymizerGUI:
                 new_id += 1
 
         tags = self.__options_widget.line_tag_actions.text()
-        tags = tags.split(',') if tags != '' else list()     # Empty list
-
+        tags = tags.split(';') if tags != '' else list()     # Empty list
+        tags = list(zip(*(iter(tags),) * 2))  # TODO: improve tag actions GUI [["tags", action], ["tags", action], ...]
         anonymization_rules = self.__get_anonymization_rules(tags, self.__options_widget.dict_file_widget.text_box.text())
 
         self.setDisabled(True)
@@ -477,7 +478,7 @@ class AnonymizerGUI:
 
                     tags_list = [ast.literal_eval(current_tag_parameters[0])]
 
-                    action = eval(action_name)
+                    action = actions_map_name_functions[action_name]
                     # When generate_actions is called and we have options, we don't want use regexp
                     # as an action but we want to call it to generate a new method
                     if options is not None:
